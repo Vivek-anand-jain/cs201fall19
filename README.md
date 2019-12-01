@@ -39,6 +39,8 @@ You will carry out this project as follows:
 java -cp bin:sootOutput <Test class file name without extenstion>
 ```
 
+> Note: You have to update CLASS_UNDER_ANALYSIS to use target java file.
+
 #### Pointers
 1. For Static Analysis step 2, we used [this](https://gist.github.com/musabhusaini/4141729) gist to achieve the def-use functionality.
 2. For Dynamic Analysis, we used [Soot's profiler tutorial](https://github.com/Sable/soot/tree/master/tutorial/profiler2)
