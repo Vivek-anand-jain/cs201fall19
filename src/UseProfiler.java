@@ -8,8 +8,6 @@ import soot.BodyTransformer;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.jimple.AssignStmt;
-import soot.jimple.IfStmt;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Jimple;
 import soot.jimple.ReturnStmt;
@@ -18,6 +16,7 @@ import soot.jimple.Stmt;
 import soot.jimple.StringConstant;
 import soot.jimple.toolkits.annotation.logic.Loop;
 import soot.jimple.toolkits.annotation.logic.LoopFinder;
+import soot.toolkits.graph.BriefUnitGraph;
 import soot.util.Chain;
 
 public class UseProfiler extends BodyTransformer {
@@ -31,9 +30,16 @@ public class UseProfiler extends BodyTransformer {
 		reportCounter = counterClass.getMethod("void report()");
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void internalTransform(Body body, String phase, Map options) {
 		SootMethod method = body.getMethod();
 		Chain units = body.getUnits();
+
+		DataDependencies dataDependencies = new DataDependencies(
+				new BriefUnitGraph(body));
+
+		List<Stmt> variablesUsedFromOutsideLoop = dataDependencies
+				.GetVariablesUsedFromOutsideLoop();
 
 		LoopFinder loopFinder = new LoopFinder();
 		loopFinder.transform(body);
@@ -41,7 +47,7 @@ public class UseProfiler extends BodyTransformer {
 		for (Loop loop : loops) {
 			List<Stmt> loopStatements = loop.getLoopStatements();
 			for (Stmt stmt : loopStatements) {
-				if (stmt instanceof AssignStmt || stmt instanceof IfStmt) {
+				if (variablesUsedFromOutsideLoop.contains(stmt)) {
 					InvokeExpr incExpr = Jimple.v().newStaticInvokeExpr(
 							increaseCounter.makeRef(),
 							StringConstant.v(stmt.toString()));

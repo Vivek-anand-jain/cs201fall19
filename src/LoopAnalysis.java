@@ -5,6 +5,8 @@ import java.util.List;
 import soot.jimple.spark.ondemand.genericutil.Stack;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
+import soot.toolkits.graph.DominatorsFinder;
+import soot.toolkits.graph.MHGDominatorsFinder;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 
@@ -21,12 +23,14 @@ public class LoopAnalysis {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public LoopAnalysis(BlockGraph blockGraph) {
-		DominatorSetAnalysis dominatorSet = new DominatorSetAnalysis(blockGraph);
+		DominatorsFinder dominatorSet = new MHGDominatorsFinder(blockGraph);
+
 		loop = new ArrayList<FlowSet>();
 		for (Block currentBlock : blockGraph) {
 			for (Block succ : currentBlock.getSuccs()) {
-				if (dominatorSet.IsDominatedBy(currentBlock, succ)) {
+				if (dominatorSet.isDominatedBy(currentBlock, succ)) {
 					stack = new Stack<Block>();
 					FlowSet currentLoopSet = new ArraySparseSet();
 					currentLoopSet.add(succ);
@@ -43,10 +47,11 @@ public class LoopAnalysis {
 		}
 	}
 
-	public List<FlowSet> GetAllLoops () {
+	public List<FlowSet> GetAllLoops() {
 		return loop;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public void PrintAllLoops() {
 		if (loop.isEmpty()) {
 			System.out.println("No loops");

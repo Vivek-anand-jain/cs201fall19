@@ -1,20 +1,26 @@
+import java.util.List;
+
 import soot.Body;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.jimple.Stmt;
 import soot.options.Options;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.BriefBlockGraph;
+import soot.toolkits.graph.BriefUnitGraph;
 
 public class StaticAnalysis {
 	public static void main(String[] args) {
-		configure(Constant.ANALYSIS_PATH);
-		SootClass sootClass = Scene.v().loadClassAndSupport("Test1");
+		configure(Constant.INPUT_PATH);
+		SootClass sootClass = Scene.v().loadClassAndSupport(
+				Constant.CLASS_UNDER_ANALYSIS);
 		sootClass.setApplicationClass();
 		Scene.v().loadNecessaryClasses();
 
 		for (SootMethod sm : sootClass.getMethods()) {
+			System.out.println("===================================");
 			System.out.println("Method: " + sm.getSignature());
 			Body b = sm.retrieveActiveBody();
 			BlockGraph blockGraph = new BriefBlockGraph(b);
@@ -23,6 +29,15 @@ public class StaticAnalysis {
 			System.out.println("Loops: ");
 			LoopAnalysis loopAnalysis = new LoopAnalysis(blockGraph);
 			loopAnalysis.PrintAllLoops();
+
+			DataDependencies dataDependencies = new DataDependencies(
+					new BriefUnitGraph(b));
+
+			System.out.println("Statement using variables from outside the loop: ");
+			List<Stmt> getVariablesUsedFromOutsideLoop = dataDependencies
+					.GetVariablesUsedFromOutsideLoop();
+			System.out.println(getVariablesUsedFromOutsideLoop);
+			System.out.println();
 		}
 	}
 
@@ -36,33 +51,9 @@ public class StaticAnalysis {
 		Options.v().set_whole_program(true);
 		Options.v().set_allow_phantom_refs(true);
 		Options.v().set_src_prec(Options.src_prec_java);
-		Options.v().set_output_format(Options.output_format_class);
+		Options.v().set_output_format(Options.output_format_jimple);
 		Options.v().set_soot_classpath(classpath);
 		Options.v().set_prepend_classpath(true);
 		Options.v().setPhaseOption("cg.spark", "on");
 	}
 }
-
-// UnitGraph graph = new BriefUnitGraph(b);
-// Set<Value> definitions = new HashSet<Value>();
-//
-// for (Unit unit : graph) {
-// if (unit instanceof DefinitionStmt) {
-// System.out.println(unit.toString());
-// DefinitionStmt definitionStmt = (DefinitionStmt) unit;
-// Value leftOp = definitionStmt.getLeftOp();
-// definitions.add(leftOp);
-// }
-// if (unit instanceof AssignStmt) {
-// System.out.println(unit.toString());
-//
-// AssignStmt definitionStmt = (AssignStmt) unit;
-// Value rightOp = definitionStmt.getRightOp();
-// String[] split = rightOp.toString().split(" ");
-// for (String string : split) {
-// if (definitions.contains(string)) {
-// }
-// }
-// }
-//
-// }
