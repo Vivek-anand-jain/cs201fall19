@@ -24,8 +24,8 @@ You will carry out this project as follows:
 ### Setting up
 
 1. Download [Eclipse Kepler](http://www.eclipse.org/downloads/packages/release/kepler/sr2/eclipse-standard-432) and setup [Java 7](https://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html) as working environment
-2. Download the [project](https://github.com/Vivek-anand-jain/cs201fall19/archive/master.zip), extract it and import it on eclipse (Select File -> Import -> select "Existing Projects into Workspace" -> Select Next -> For root directory, select the extracted folder CS201Fall19 -> Select Finish.
-3. Add [Soot jar](https://www.cs.ucr.edu/~aalav003/soot-2.5.0.jar) files to your project (Right click on your project and select Properties -> Select Java Build Path -> Select Libraries -> Select Add External JARs -> Select the downloaded jar file -> Select OK -> Select OK)
+2. Download the [project](https://github.com/Vivek-anand-jain/cs201fall19/archive/master.zip), extract it and import it on eclipse (Select File -> Import -> select "Existing Projects into Workspace" -> Select Next -> For root directory, select the extracted folder CS201Fall19-master -> Select Finish.
+3. Download and add [Soot jar](https://www.cs.ucr.edu/~aalav003/soot-2.5.0.jar) file to your project (Right click on your project and select Properties -> Select Java Build Path -> Select Libraries -> Select Add External JARs -> Select the downloaded jar file -> Select Open -> Select OK)
 
 ### Running Static Analysis
 1. Configure `INPUT_PATH`, `OUTPUT_PATH` and `CLASS_UNDER_ANALYSIS` in `src/Constant.java`
@@ -35,8 +35,15 @@ You will carry out this project as follows:
 1. Configure `INPUT_PATH`, `OUTPUT_PATH` and `CLASS_UNDER_ANALYSIS` in `src/Constant.java`
 2. Open `src/DynamicAnalysis.java` and run it. (It will take 1 - 2 minute to generate class file.)
 3. After generating class file, open the terminal and go to project root and run the following command: 
+
+*For Linux:*
 ```sh
 java -cp bin:sootOutput <Test class file name without extenstion>
+```
+
+*For Windows:*
+```sh
+java -cp bin;sootOutput <Test class file name without extenstion>
 ```
 
 > Note: You have to update CLASS_UNDER_ANALYSIS to use target java file.
